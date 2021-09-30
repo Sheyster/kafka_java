@@ -42,3 +42,7 @@ default.replication.factor=2
 For any environment, except development, must be used: (this number 3 was suggested by kafka documentation
 offsets.topic.replication.factor=3
 transaction.state.log.replication.factor=3
+
+ACK with 0 value, meaning that the server wont wait for any response, so it will send a message and done
+ACK with 1 value, meaning that the server will wait for the master response and follow without wait for the replication persiste
+ACK with all value, meaning that the server will wait for the master response and all replications persiste
