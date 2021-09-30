@@ -16,11 +16,11 @@ Verify topic created
 ./bin/kafka-topics.sh --list --bootstrap-server localhost:9092
 
 Verify comsumer
-./bin/kafka-console-consumer.sh --bootstrap-server 172.24.113.53:9092 --topic ECOMMERCE_NEW_ORDER --from-beginning
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic ECOMMERCE_NEW_ORDER --from-beginning
 
 
 Verify topics
-./bin/kafka-topics.sh --bootstrap-server 172.28.10.205:9092 --describe
+./bin/kafka-topics.sh --bootstrap-server locahost:9092 --describe
 
 
 This command didn't work in kafka version 2.13
@@ -31,21 +31,8 @@ The follow command worded very well to update kafka partitions
 
 
 
-Testei na versão 2.13 e não funcionou, tudo indica que funcionaria em versões mais antigas
-./bin/kafka-topics.sh --alter --zookeeper localhost:2181 --topic NEW_ORDER --partitions 5
-
-Este comando funcionou na versão 2.13
-./bin/kafka-topics.sh --alter --bootstrap-server localhost:9092 --topic NEW_ORDER --partitions 5
-
-
-CQRS
-
-BRSPBRJ121KWPT.brsp.capco.com:9092
-
-
 For us keep save our application we need create a new replication, so we need another kafka up in another machine,
 for that, we need run the follow command
-
 
 
 We can't alter replication of kafka after started, so we need to change our server.properties and then start it
