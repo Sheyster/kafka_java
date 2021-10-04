@@ -20,7 +20,7 @@ public class KafkaDispatcher<T> implements Closeable {
 
     private static Properties properties() {
         Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "172.28.10.205:9092");
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "172.26.246.109:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
