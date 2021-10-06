@@ -1,4 +1,4 @@
-package com.capco.ecommerce;
+package com.capco.ecommerce.consumer;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -73,6 +73,10 @@ public class KafkaService<T> implements Closeable {
         //Id generated to never break in one message, because if you send the same message always, the consumer always be the same too
         properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
         properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1"); //Max message process
+
+        // Definir de que ponto nosso consumidor ira comecar a ler a fila, detalhe é que pode acontecer de consumir mensagens
+        // que ja foram processadas ou então deixar se consumir caso não configurado
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         properties.putAll(overrideProperties);
 
         return properties;

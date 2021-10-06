@@ -1,26 +1,23 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.consumer.ConsumerService;
 import com.capco.ecommerce.consumer.KafkaService;
+import com.capco.ecommerce.consumer.ServiceRunner;
 import com.capco.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-public class EmailNewOrderService {
+public class EmailNewOrderService implements ConsumerService<Order> {
 
     private final KafkaDispatcher<String> emailDispatcher = new KafkaDispatcher();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        EmailNewOrderService emailService = new EmailNewOrderService();
-        try (KafkaService<Order> service = new KafkaService(EmailNewOrderService.class.getSimpleName(), "ECOMMERCE_NEW_ORDER",
-                emailService::parse,
-                new HashMap<String, String>())) {
-            service.run();
-        }
+        new ServiceRunner(EmailNewOrderService::new).start(1);
     }
 
-    private void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException {
+    public void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException {
         System.out.println("---------------------------------------------");
         System.out.println("Processing new order, preparing email");
         System.out.println(record.value());
@@ -32,5 +29,15 @@ public class EmailNewOrderService {
                 record.value().getId().continueWith(EmailNewOrderService.class.getSimpleName()),
                 emailCode);
 
+    }
+
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_NEW_ORDER";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return EmailNewOrderService.class.getSimpleName();
     }
 }

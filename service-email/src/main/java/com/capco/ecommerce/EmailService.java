@@ -1,5 +1,7 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.consumer.ConsumerService;
+import com.capco.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class EmailService implements ConsumerService<String> {

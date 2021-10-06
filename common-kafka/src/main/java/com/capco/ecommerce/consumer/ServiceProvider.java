@@ -1,6 +1,4 @@
-package com.capco.ecommerce;
-
-import com.capco.ecommerce.consumer.KafkaService;
+package com.capco.ecommerce.consumer;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -14,7 +12,6 @@ public class ServiceProvider<T> implements Callable<Void> {
     }
 
     public Void call() throws ExecutionException, InterruptedException {
-
         ConsumerService myService = factory.create();
         try (KafkaService service = new KafkaService(myService.getConsumerGroup(),
                 myService.getTopic(),
@@ -22,5 +19,6 @@ public class ServiceProvider<T> implements Callable<Void> {
                 new HashMap<String, String>())) {
             service.run();
         }
+        return null;
     }
 }

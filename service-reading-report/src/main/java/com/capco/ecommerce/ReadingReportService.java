@@ -1,29 +1,23 @@
 package com.capco.ecommerce;
 
-import com.capco.ecommerce.consumer.KafkaService;
+import com.capco.ecommerce.consumer.ConsumerService;
+import com.capco.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-public class ReadingReportService {
+public class ReadingReportService implements ConsumerService<User> {
 
     private static final Path source = new File("src/main/resources/report.txt").toPath();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        ReadingReportService readingReportService = new ReadingReportService();
-        try (KafkaService<User> service = new KafkaService(
-                ReadingReportService.class.getSimpleName(), "ECOMMERCE_USER_GENERATE_READING_REP0RT",
-                readingReportService::parse,
-                new HashMap<String, String>())) {
-            service.run();
-        }
+        new ServiceRunner(ReadingReportService::new).start(5);
     }
 
-    private void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
+    public void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
         System.out.println("---------------------------------------------");
         System.out.println("Processing report for " + record.value());
         Message<User> message = record.value();
@@ -36,4 +30,13 @@ public class ReadingReportService {
         System.out.println("File created: " + target.getAbsolutePath());
     }
 
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_USER_GENERATE_READING_REP0RT";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return ReadingReportService.class.getSimpleName();
+    }
 }
