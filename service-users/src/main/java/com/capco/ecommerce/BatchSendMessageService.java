@@ -1,5 +1,7 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.consumer.KafkaService;
+import com.capco.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.sql.Connection;
@@ -29,11 +31,11 @@ public class BatchSendMessageService {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
         BatchSendMessageService batchService = new BatchSendMessageService();
         try (KafkaService<String> service = new KafkaService(BatchSendMessageService.class.getSimpleName(),
                 "ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS",
-                batchService::parse, String.class,
+                batchService::parse,
                 new HashMap<String, String>())) {
             service.run();
         }
@@ -45,9 +47,12 @@ public class BatchSendMessageService {
         Message<String> message = record.value();
         System.out.println("Topic: " + message.getPayload());
 
+        if(true) throw new RuntimeException("Deu um erro que eu forcei");
+
         for (User user : getAllUsers()) {
-            userDispatcher.send(message.getPayload(), user.getUuid(),
+            userDispatcher.sendAsync(message.getPayload(), user.getUuid(),
                     message.getId().continueWith(BatchSendMessageService.class.getSimpleName()), user);
+            System.out.println("Send to user " + user);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.dispatcher.KafkaDispatcher;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;

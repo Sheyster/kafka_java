@@ -1,10 +1,12 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.consumer.KafkaService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class CreateUserService {
 
@@ -23,10 +25,10 @@ public class CreateUserService {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
         CreateUserService createUserService = new CreateUserService();
         try (KafkaService<Order> service = new KafkaService(CreateUserService.class.getSimpleName(), "ECOMMERCE_NEW_ORDER",
-                createUserService::parse, Order.class,
+                createUserService::parse,
                 new HashMap<String, String>())) {
             service.run();
         }

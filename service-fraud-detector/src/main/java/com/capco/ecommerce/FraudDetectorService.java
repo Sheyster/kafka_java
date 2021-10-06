@@ -1,5 +1,7 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.consumer.KafkaService;
+import com.capco.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.math.BigDecimal;
@@ -10,10 +12,10 @@ public class FraudDetectorService {
 
     private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         FraudDetectorService fraudDetectorService = new FraudDetectorService();
         try (KafkaService<Order> service = new KafkaService(FraudDetectorService.class.getSimpleName(), "ECOMMERCE_NEW_ORDER",
-                fraudDetectorService::parse, Order.class,
+                fraudDetectorService::parse,
                 new HashMap<String, String>())) {
             service.run();
         }

@@ -1,21 +1,23 @@
 package com.capco.ecommerce;
 
+import com.capco.ecommerce.consumer.KafkaService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public class ReadingReportService {
 
     private static final Path source = new File("src/main/resources/report.txt").toPath();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         ReadingReportService readingReportService = new ReadingReportService();
         try (KafkaService<User> service = new KafkaService(
-                ReadingReportService.class.getSimpleName(), " ECOMMERCE_USER_GENERATE_READING_REP0RT",
-                readingReportService::parse, User.class,
+                ReadingReportService.class.getSimpleName(), "ECOMMERCE_USER_GENERATE_READING_REP0RT",
+                readingReportService::parse,
                 new HashMap<String, String>())) {
             service.run();
         }

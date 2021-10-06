@@ -1,5 +1,7 @@
-package com.capco.ecommerce;
+package com.capco.ecommerce.dispatcher;
 
+import com.capco.ecommerce.Message;
+import com.capco.ecommerce.MessageAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.kafka.common.serialization.Serializer;
