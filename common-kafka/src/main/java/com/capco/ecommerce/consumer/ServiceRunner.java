@@ -4,10 +4,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServiceRunner<T> {
-    private ServiceProvider<T> provider;
+    private final ServiceProvider<T> provider;
 
     public ServiceRunner(ServiceFactory<T> factory) {
-        this.provider = new ServiceProvider<T>(factory);
+        this.provider = new ServiceProvider<>(factory);
     }
 
     public void start(int threadCount) {

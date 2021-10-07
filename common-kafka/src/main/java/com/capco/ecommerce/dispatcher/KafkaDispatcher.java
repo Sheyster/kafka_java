@@ -23,7 +23,7 @@ public class KafkaDispatcher<T> implements Closeable {
 
     private static Properties properties() {
         Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "172.24.132.133:9092");
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "172.31.79.143:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
@@ -33,14 +33,14 @@ public class KafkaDispatcher<T> implements Closeable {
 
     // Send and wait for an answer "Sync"
     public void send(String topic, String key, CorrelationId id, T payload) throws ExecutionException, InterruptedException {
-        Future future = sendAsync(topic, key, id, payload);
+        Future<?> future = sendAsync(topic, key, id, payload);
         future.get(); // Desta forma ele ira adicionar o throws e rodar de forma sincrona
     }
 
     // Send and not wait for an answer "Async"
-    public Future sendAsync(String topic, String key, CorrelationId id, T payload) {
-        Message value = new Message(id, payload);
-        ProducerRecord record = new ProducerRecord(topic, key, value);
+    public Future<?> sendAsync(String topic, String key, CorrelationId id, T payload) {
+        Message<?> value = new Message<>(id, payload);
+        ProducerRecord record = new ProducerRecord<>(topic, key, value);
         Callback callback = (data, ex) -> {
             if (ex != null) {
                 ex.printStackTrace();
@@ -50,8 +50,7 @@ public class KafkaDispatcher<T> implements Closeable {
         };
 
         //producer.send(record); // Desta forma ele roda de forma assincrona
-        Future future = producer.send(record, callback);
-        return future;
+        return producer.send(record, callback);
     }
 
     @Override

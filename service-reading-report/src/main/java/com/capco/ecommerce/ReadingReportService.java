@@ -7,14 +7,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.ExecutionException;
 
 public class ReadingReportService implements ConsumerService<User> {
 
     private static final Path source = new File("src/main/resources/report.txt").toPath();
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        new ServiceRunner(ReadingReportService::new).start(5);
+    public static void main(String[] args) {
+        new ServiceRunner<>(ReadingReportService::new).start(1);
     }
 
     public void parse(ConsumerRecord<String, Message<User>> record) throws IOException {

@@ -14,7 +14,7 @@ public class LogService {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         LogService logService = new LogService();
 
-        try (KafkaService service = new KafkaService(EmailService.class.getName(), Pattern.compile("ECOMMERCE.*"),
+        try (KafkaService<?> service = new KafkaService<>(EmailService.class.getName(), Pattern.compile("ECOMMERCE.*"),
                 logService::parse,
                 Map.of(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName()))) {
             service.run();

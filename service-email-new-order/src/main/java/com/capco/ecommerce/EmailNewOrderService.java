@@ -1,20 +1,18 @@
 package com.capco.ecommerce;
 
 import com.capco.ecommerce.consumer.ConsumerService;
-import com.capco.ecommerce.consumer.KafkaService;
 import com.capco.ecommerce.consumer.ServiceRunner;
 import com.capco.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class EmailNewOrderService implements ConsumerService<Order> {
 
-    private final KafkaDispatcher<String> emailDispatcher = new KafkaDispatcher();
+    private final KafkaDispatcher<String> emailDispatcher = new KafkaDispatcher<>();
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        new ServiceRunner(EmailNewOrderService::new).start(1);
+    public static void main(String[] args) {
+        new ServiceRunner<>(EmailNewOrderService::new).start(1);
     }
 
     public void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException {

@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 public class BatchSendMessageService {
 
     private final Connection connection;
-    private final KafkaDispatcher<User> userDispatcher = new KafkaDispatcher();
+    private final KafkaDispatcher<User> userDispatcher = new KafkaDispatcher<>();
 
     BatchSendMessageService() throws SQLException {
         String url = "jdbc:sqlite:target/users_database.db";
@@ -33,21 +33,21 @@ public class BatchSendMessageService {
 
     public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
         BatchSendMessageService batchService = new BatchSendMessageService();
-        try (KafkaService<String> service = new KafkaService(BatchSendMessageService.class.getSimpleName(),
+        try (KafkaService<String> service = new KafkaService<>(BatchSendMessageService.class.getSimpleName(),
                 "ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS",
                 batchService::parse,
-                new HashMap<String, String>())) {
+                new HashMap<>())) {
             service.run();
         }
     }
 
-    private void parse(ConsumerRecord<String, Message<String>> record) throws ExecutionException, InterruptedException, SQLException {
+    private void parse(ConsumerRecord<String, Message<String>> record) throws SQLException {
         System.out.println("---------------------------------------------");
         System.out.println("Processing new batch");
         Message<String> message = record.value();
         System.out.println("Topic: " + message.getPayload());
 
-        if(true) throw new RuntimeException("Deu um erro que eu forcei");
+        if (true) throw new RuntimeException("Não deu bom :(");
 
         for (User user : getAllUsers()) {
             userDispatcher.sendAsync(message.getPayload(), user.getUuid(),
@@ -60,7 +60,7 @@ public class BatchSendMessageService {
         ResultSet results = connection.prepareStatement("select uuid from Users").executeQuery();
 
         List<User> users = new ArrayList<>();
-        while (results.next()){
+        while (results.next()) {
             users.add(new User(results.getString(1)));
         }
 

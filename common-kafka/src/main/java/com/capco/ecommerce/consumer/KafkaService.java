@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class KafkaService<T> implements Closeable {
     private final KafkaConsumer<String, Message<T>> consumer;
-    private final ConsumerFunction parse;
+    private final ConsumerFunction<?> parse;
 
     public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Map<String, String> properties) {
         this(parse, groupId, properties);
@@ -37,8 +37,9 @@ public class KafkaService<T> implements Closeable {
         this.consumer = new KafkaConsumer<>(getProperties(groupId, properties));
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     public void run() throws ExecutionException, InterruptedException {
-        try(KafkaDispatcher deadLetter = new KafkaDispatcher<>()) {
+        try (KafkaDispatcher deadLetter = new KafkaDispatcher<>()) {
             while (true) {
                 ConsumerRecords<String, Message<T>> records = consumer.poll(Duration.ofMillis(100));
                 if (!records.isEmpty()) {
@@ -53,6 +54,7 @@ public class KafkaService<T> implements Closeable {
                             // so far, just logging the exception for this message
                             e.printStackTrace();
                             // treatment now
+                            System.out.println("Deu ruim" + record.toString());
                             Message<T> message = (Message<T>) record.value();
                             deadLetter.send("ECOMMERCE_DEADLETTER", message.getId().toString(),
                                     message.getId().continueWith("DeadLetter"),
@@ -66,7 +68,7 @@ public class KafkaService<T> implements Closeable {
 
     private Properties getProperties(String groupId, Map<String, String> overrideProperties) {
         Properties properties = new Properties();
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "172.24.132.133:9092");
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "172.31.79.143:9092");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
